@@ -49,3 +49,34 @@ def add_movie(title, year, rating):
         except Exception as e:
             print(f"Error: {e}")
     
+
+def delete_movie(title):
+    """ Delete a movie from the database. """
+    with engine.connect() as connection:
+        try:
+            connection.execute(text("""
+            
+                DELETE FROM movies
+                WHERE title = :title
+            
+            """), {"title": title})
+            connection.commit()
+            print(f"Movie '{title}' was deleted.")
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+def update_movie(title, rating):
+    """ Update the rating of a movie in the database. """
+    with engine.connect() as connection:
+        try:
+            connection.execute(text("""
+            
+                UPDATE movies SET rating = :rating
+                WHERE title = :title
+            
+            """), {"title": title, "rating": rating})
+            connection.commit()
+            print(f"Movie '{title}' updated.")
+        except Exception as e:
+            print(f"Error: {e}")

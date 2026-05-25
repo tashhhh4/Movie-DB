@@ -1,6 +1,8 @@
 # Runs and tests sql queries
 
-from movie_storage_sql import ensure_schema, add_movie, list_movies
+from movie_storage_sql import (
+    ensure_schema, add_movie, list_movies, update_movie, delete_movie
+)
 
 ensure_schema()
 
@@ -10,3 +12,9 @@ add_movie("The Butterfly Effect", 2004, 8.4)
 movies = list_movies()
 for movie in movies:
     print(movie)
+
+update_movie("The Butterfly Effect", 7.0)
+delete_movie("The Devil Wears Prada")
+
+print("After modifying data:")
+print(list_movies())
