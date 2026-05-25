@@ -1,0 +1,101 @@
+import style
+from console import err
+from movie_storage import get_movies
+
+
+# General input wrapper function
+
+def get_user_input(prompt):
+    """ Gets user input and differentiates user's input with a cyan style. """
+    user_input = input(prompt + style.CYAN)
+    print(style.ENDC, end="")
+    return user_input
+
+
+# Functions which repeat until valid input is entered
+
+def get_movie_title(prompt):
+    """ Gets a movie title.
+        - Can't be empty
+    """
+    movies = get_movies()
+    while True:
+        title = get_user_input(prompt)
+        if title == "":
+            err(f"Movie title is required.")
+            continue
+
+        if title in movies:
+            err(f"Movie {title} already exists!")
+            continue
+
+        return title
+
+
+def get_movie_rating(prompt, optional=False):
+    """ Gets a movie rating.
+        - Must convert to float without errors.
+        - Must be between 0 and 10
+        - Can return None if `optional` is set to `True`.
+    """
+    while True:
+        rating = get_user_input(prompt)
+        
+        if rating == "":
+            if optional:
+                return None
+            else:
+                err("Rating is required.")
+                continue
+        
+        try:
+            rating = float(rating)
+            if not 0.0 <= rating <= 10.0:
+                err("Invalid rating.")
+                continue
+
+            return rating        
+
+        except ValueError:
+            err("Invalid rating.")
+
+
+def get_movie_year(prompt, optional=False):
+    """ Gets a movie year.
+        - Must successfully convert to an int.
+        - Can return None if `optional` is set to `True`.
+    """
+    while True:
+        year = get_user_input(prompt)
+
+        if year == "":
+            if optional:
+                return None
+            else:
+                err("Year is required.")
+                continue
+
+        try:
+            year = int(year)
+            return year
+
+        except ValueError:
+            err("Year invalid.")
+
+
+def get_y_n(prompt):
+    """ Gets a yes or no choice from the user, returned as a
+        True or False value.
+        Implicit not allowed.
+
+        Returns:
+            user_choice: boolean
+    """
+    while True:
+        choice = get_user_input(prompt).upper()
+        if choice == 'Y':
+            return True
+        elif choice == 'N':
+            return False
+        else:
+            err("Please enter \"Y\" or \"N\".")
