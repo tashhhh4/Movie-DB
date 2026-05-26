@@ -2,9 +2,17 @@ from sqlalchemy import create_engine, text
 
 DB_URL = "sqlite:///movies.db"
 
-engine = create_engine(DB_URL, echo=True)
+engine = None
 
-def ensure_schema():
+
+def init_engine(debug=True):
+    """ Initialize the sql engine with an optional debug mode.
+    """
+    global engine
+    engine = create_engine(DB_URL, echo=(debug == True))
+
+
+def create_schema():
     """ Creates the movies table if it doesn't already exist. """
     with engine.connect() as connection:
         connection.execute(text("""
@@ -80,3 +88,25 @@ def update_movie(title, rating):
             print(f"Movie '{title}' updated.")
         except Exception as e:
             print(f"Error: {e}")
+
+
+# Tests
+if __name__ == "__main__":
+    print("engine is", engine)
+    init_engine()
+    print("after running init. engine is", engine)
+
+    create_schema()
+
+    add_movie("The Devil Wears Prada", 2006, 6.5)
+    add_movie("The Butterfly Effect", 2004, 8.4)
+
+    movies = list_movies()
+    for movie in movies:
+        print(movie)
+
+    update_movie("The Butterfly Effect", 7.0)
+    delete_movie("The Devil Wears Prada")
+
+    print("After modifying data:")
+    print(list_movies())
