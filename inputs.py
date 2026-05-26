@@ -1,6 +1,5 @@
 import style
 from console import err
-# from movie_storage import get_movies
 from movie_storage_sql import list_movies as get_movies
 
 
@@ -23,7 +22,7 @@ def get_movie_title(prompt):
     while True:
         title = get_user_input(prompt)
         if title == "":
-            err(f"Movie title is required.")
+            err("Movie title is required.")
             continue
 
         if title in movies:
@@ -41,21 +40,21 @@ def get_movie_rating(prompt, optional=False):
     """
     while True:
         rating = get_user_input(prompt)
-        
+
         if rating == "":
-            if optional:
-                return None
-            else:
+            if not optional:
                 err("Rating is required.")
                 continue
-        
+
+            return None
+
         try:
             rating = float(rating)
             if not 0.0 <= rating <= 10.0:
                 err("Invalid rating.")
                 continue
 
-            return rating        
+            return rating
 
         except ValueError:
             err("Invalid rating.")
@@ -70,11 +69,11 @@ def get_movie_year(prompt, optional=False):
         year = get_user_input(prompt)
 
         if year == "":
-            if optional:
-                return None
-            else:
+            if not optional:
                 err("Year is required.")
                 continue
+
+            return None
 
         try:
             year = int(year)
@@ -96,7 +95,7 @@ def get_y_n(prompt):
         choice = get_user_input(prompt).upper()
         if choice == 'Y':
             return True
-        elif choice == 'N':
+        if choice == 'N':
             return False
-        else:
-            err("Please enter \"Y\" or \"N\".")
+
+        err("Please enter \"Y\" or \"N\".")

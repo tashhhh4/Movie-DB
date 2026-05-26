@@ -9,7 +9,7 @@ def init_engine(debug=True):
     """ Initialize the sql engine with an optional debug mode.
     """
     global engine
-    engine = create_engine(DB_URL, echo=(debug == True))
+    engine = create_engine(DB_URL, echo=debug is True)
 
 
 def create_schema():
@@ -56,7 +56,7 @@ def add_movie(title, year, rating):
             print(f"Movie '{title}' added successfully.")
         except Exception as e:
             print(f"Error: {e}")
-    
+
 
 def delete_movie(title):
     """ Delete a movie from the database. """
@@ -101,8 +101,7 @@ if __name__ == "__main__":
     add_movie("The Devil Wears Prada", 2006, 6.5)
     add_movie("The Butterfly Effect", 2004, 8.4)
 
-    movies = list_movies()
-    for movie in movies:
+    for movie in list_movies():
         print(movie)
 
     update_movie("The Butterfly Effect", 7.0)
