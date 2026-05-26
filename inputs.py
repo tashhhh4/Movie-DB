@@ -1,6 +1,7 @@
 import style
 from console import err
-from movie_storage import get_movies
+# from movie_storage import get_movies
+from movie_storage_sql import list_movies as get_movies
 
 
 # General input wrapper function

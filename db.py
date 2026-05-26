@@ -9,13 +9,15 @@ from inputs import (
     get_movie_year,
     get_y_n,
 )
-from movie_storage import (
-    get_movies as load_movies,
+from movie_storage_sql import (
+    list_movies as load_movies,
     add_movie as add,
     delete_movie as delete,
     update_movie as update,
+    init_engine
 )
 
+init_engine(debug=False)
 
 def list_all_movies():
     """ Prints all the movies in a vertical list. """
@@ -65,7 +67,7 @@ def update_movie():
         err(f"Movie {title} doesn't exist!")
         return
 
-    rating = get_movie_rating()
+    rating = get_movie_rating("Enter new rating: ")
 
     update(title, rating)
     print(f"Movie {title} successfully updated.")
