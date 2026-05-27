@@ -16,6 +16,7 @@ from movie_storage_sql import (
     update_movie as update,
     init_engine
 )
+from movie_lookup import get_movie_details
 
 init_engine(debug=False)
 
@@ -31,14 +32,24 @@ def list_all_movies():
 
 
 def add_movie():
-    """ Adds a movie to the database. Rating and year required. """
+    """ Adds a movie to the database by title.
+    Automatically fills in title with corrected spelling, year, and IMDB rating.
+    """
 
-    title = get_movie_title("Enter new movie name: ")
-    rating = get_movie_rating("Enter new movie rating (0-10): ")
-    year = get_movie_year("Enter year of release: ")
+    title = get_movie_title("Enter movie name: ")
+
+    details = get_movie_details(title)
+
+    if not details:
+        print(f"Movie {title} was not found.")
+        return
+
+    title, year, rating = details
 
     add(title, year, rating)
     print(f"Movie {title} successfully added.")
+    print(f"Year: {year}")
+    print(f"Rating (IMDB): {rating}")
 
 
 def delete_movie():
