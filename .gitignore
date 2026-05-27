@@ -1,8 +1,17 @@
+# Virtual Env
 .venv
+
+# Pycache
 __pycache__/*
 
+# Generated diagrams
 *.png
 
+# Database file
 movies.db
 
+# Hidden passwords
 secrets.py
+
+# Notes
+response_data.txt
