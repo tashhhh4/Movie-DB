@@ -17,14 +17,19 @@ def get_movie_details(title_search):
     if not found_movie:
         return None
 
-    return data["Title"], data["Year"], data["imdbRating"]
-
+    return (
+        data["Title"],
+        data["Year"],
+        data["imdbRating"],
+        data["Poster"]
+    )
 
 # Tests
 if __name__ == "__main__":
     details = get_movie_details("titanic")
-    title, year, rating = details
+    title, year, rating, poster_url = details
     print(f"{title}: {year} ({rating})")
+    print(f"Poster: {poster_url}")
 
     details = get_movie_details("fake movie that doesn't exist`")
     print(details)

@@ -1,19 +1,37 @@
 from sqlalchemy import create_engine, text
-
-DB_URL = "sqlite:///movies.db"
+from console import print_movie_dict
 
 engine = None
 
 
-def init_engine(debug=True):
-    """ Initialize the sql engine with an optional debug mode.
+def init_engine(debug=True, dbfile="movies.db"):
+    """ Initialize the sql engine.
+    Optional debug mode, generates verbose logging from SQL.
+    Optional db filename parameter, useful for testing without destroying data.
     """
     global engine
-    engine = create_engine(DB_URL, echo=debug is True)
+
+    db_url = f"sqlite:///{dbfile}"
+
+    engine = create_engine(db_url, echo=debug)
 
 
-def create_schema():
-    """ Creates the movies table if it doesn't already exist. """
+def reset_schema():
+    """ Recreates the tables of the database.
+    
+            #########################
+            DESTROYS EXISTING DATA!!!
+            #########################
+    
+    """
+    with engine.connect() as connection:
+        connection.execute(text("""
+
+            DROP TABLE IF EXISTS movies
+
+        """))
+        connection.commit()
+
     with engine.connect() as connection:
         connection.execute(text("""
 
@@ -21,7 +39,8 @@ def create_schema():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT UNIQUE NOT NULL,
                 year INTEGER NOT NULL,
-                rating REAL NOT NULL
+                rating REAL NOT NULL,
+                poster_url
             )
         
         """))
@@ -33,27 +52,36 @@ def list_movies():
     with engine.connect() as connection:
         result = connection.execute(text("""
         
-            SELECT title, year, rating FROM movies
+            SELECT title, year, rating, poster_url FROM movies
         
         """))
         movies = result.fetchall()
 
-    return {row[0]: {"year": row[1], "rating": row[2]} for row in movies}
+    return {row[0]: {
+        "year": row[1],
+        "rating": row[2],
+        "poster_url": row[3]
+        } for row in movies
+    }
 
 
-def add_movie(title, year, rating):
+def add_movie(title, year, rating, poster_url):
     """ Add a new movie to the database. """
     with engine.connect() as connection:
         try:
             connection.execute(text("""
             
-                INSERT INTO movies (title, year, rating)
-                VALUES (:title, :year, :rating)
+                INSERT INTO movies (title, year, rating, poster_url)
+                VALUES (:title, :year, :rating, :poster_url)
             
-            """),
-            {"title": title, "year": year, "rating": rating})
+            """), {
+                    "title": title,
+                    "year": year,
+                    "rating": rating,
+                    "poster_url": poster_url
+                }
+            )
             connection.commit()
-            print(f"Movie '{title}' added successfully.")
         except Exception as e:
             print(f"Error: {e}")
 
@@ -69,7 +97,6 @@ def delete_movie(title):
             
             """), {"title": title})
             connection.commit()
-            print(f"Movie '{title}' was deleted.")
         except Exception as e:
             print(f"Error: {e}")
 
@@ -85,27 +112,38 @@ def update_movie(title, rating):
             
             """), {"title": title, "rating": rating})
             connection.commit()
-            print(f"Movie '{title}' updated.")
         except Exception as e:
             print(f"Error: {e}")
 
 
 # Tests
 if __name__ == "__main__":
-    print("engine is", engine)
-    init_engine()
-    print("after running init. engine is", engine)
+    init_engine(dbfile="test.db", debug=False)
+    print("sql engine initialized as", engine)
 
-    create_schema()
+    add_movie("Example Movie", 2000, 5.0, "https://www.youtube.com/watch?v=5SZYz7lZRRI")
+    add_movie("Other Movie", 2020, 6.0, "https://www.youtube.com/watch?v=5SZYz7lZRRI")
 
-    add_movie("The Devil Wears Prada", 2006, 6.5)
-    add_movie("The Butterfly Effect", 2004, 8.4)
+    print("Added 2 movies to the database.")
 
-    for movie in list_movies():
-        print(movie)
+    for title, details in list_movies().items():
+        print("    ", end="")
+        print_movie_dict(title, details)
 
-    update_movie("The Butterfly Effect", 7.0)
-    delete_movie("The Devil Wears Prada")
+    update_movie("Example Movie", 10.0)
+    update_movie("Other Movie", 1.0)
 
-    print("After modifying data:")
-    print(list_movies())
+    print("Updated movies.")
+
+    for title, details in list_movies().items():
+        print("    ", end="")
+        print_movie_dict(title, details)
+
+    delete_movie("Example Movie")
+    delete_movie("Other Movie")
+
+    print("Cleaned up movies.")
+
+    movies = list_movies()
+
+    print("Movies in database:", len(movies))

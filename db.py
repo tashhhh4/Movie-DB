@@ -44,12 +44,13 @@ def add_movie():
         print(f"Movie {title} was not found.")
         return
 
-    title, year, rating = details
+    title, year, rating, poster_url = details
 
     add(title, year, rating)
     print(f"Movie {title} successfully added.")
     print(f"Year: {year}")
     print(f"Rating (IMDB): {rating}")
+    print(f"Poster: {poster_url}")
 
 
 def delete_movie():
