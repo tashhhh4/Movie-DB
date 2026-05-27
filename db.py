@@ -34,6 +34,7 @@ def list_all_movies():
 def add_movie():
     """ Adds a movie to the database by title.
     Automatically fills in title with corrected spelling, year, and IMDB rating.
+    Prompts user if automatic lookup fails to find a rating.
     """
 
     title = get_movie_title("Enter movie name: ")
@@ -46,7 +47,12 @@ def add_movie():
 
     title, year, rating, poster_url = details
 
-    add(title, year, rating)
+    try:
+        rating_float = float(rating)
+    except ValueError:
+        rating_float = get_movie_rating(f"Enter missing rating for {title}: ")
+
+    add(title, year, rating, poster_url)
     print(f"Movie {title} successfully added.")
     print(f"Year: {year}")
     print(f"Rating (IMDB): {rating}")
