@@ -48,9 +48,9 @@ def add_movie():
     title, year, rating, poster_url = details
 
     try:
-        rating_float = float(rating)
+        rating = float(rating)
     except ValueError:
-        rating_float = get_movie_rating(f"Enter missing rating for {title}: ")
+        rating = get_movie_rating(f"Enter missing rating for {title}: ")
 
     add(title, year, rating, poster_url)
     print(f"Movie {title} successfully added.")

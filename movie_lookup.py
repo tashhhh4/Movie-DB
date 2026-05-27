@@ -17,6 +17,7 @@ def get_movie_details(title_search):
     if not found_movie:
         return None
 
+
     return (
         data["Title"],
         data["Year"],
