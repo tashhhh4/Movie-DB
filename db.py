@@ -157,7 +157,6 @@ def list_by_year():
         descending or ascending order.
     """
     order_by_newest = get_y_n("Do you want the latest movies first? (Y/N) ")
-    print("User set order_by_newest to:", order_by_newest)
 
     movies = load_movies()
     while len(movies) > 0:
