@@ -9,7 +9,7 @@ from inputs import (
     get_movie_year,
     get_y_n,
 )
-from movie_storage_sql import (
+from movie_storage.movie_storage_sql import (
     list_movies as load_movies,
     add_movie as add,
     delete_movie as delete,

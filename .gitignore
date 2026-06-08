@@ -2,7 +2,7 @@
 .venv
 
 # Pycache
-__pycache__/*
+__pycache__
 
 # Generated diagrams
 *.png
