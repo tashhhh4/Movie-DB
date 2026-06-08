@@ -1,4 +1,7 @@
 import os
+from db import get_all_movies
+
+
 OUTPUT_DIR = "output"
 STATIC_DIR = "static"
 TEMPLATE_FILE = os.path.join(STATIC_DIR, "index_template.html")
@@ -21,13 +24,29 @@ def load_text(filename):
         return data
 
 
+# Movie List Helper
+def get_movies():
+    movie_list = []
+    movie_dict = get_all_movies()
+    for key, item in movie_dict.items():
+        movie_list.append({
+            "title": key,
+            "poster_url": item["poster_url"],
+            "rating": item["rating"],
+            "year": item["year"],
+        })
+    return movie_list
+
+
 # Website Generator
 def generate():
-    movies = [
-        {"title": "Titanic", "poster_url": "https://m.media-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTUtMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg", "rating": "8.0", "year": 1997},
-        {"title": "Titanic", "poster_url": "https://m.media-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTUtMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg", "rating": "8.0", "year": 1997},
-        {"title": "Titanic", "poster_url": "https://m.media-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTUtMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg", "rating": "8.0", "year": 1997},
-    ]
+    # movies = [
+    #     {"title": "Titanic", "poster_url": "https://m.media-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTUtMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg", "rating": "8.0", "year": 1997},
+    #     {"title": "Titanic", "poster_url": "https://m.media-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTUtMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg", "rating": "8.0", "year": 1997},
+    #     {"title": "Titanic", "poster_url": "https://m.media-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTUtMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg", "rating": "8.0", "year": 1997},
+    # ]
+    movies = get_movies()
+
     username = "Tasha"
     
     list_items = ''

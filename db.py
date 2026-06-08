@@ -20,6 +20,12 @@ from movie_lookup import get_movie_details
 
 init_engine(debug=False)
 
+
+def get_all_movies():
+    """ Returns all the movies as a list. """
+    return load_movies()
+
+
 def list_all_movies():
     """ Prints all the movies in a vertical list. """
     movies = load_movies()
