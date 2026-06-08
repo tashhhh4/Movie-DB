@@ -16,12 +16,13 @@ def init_engine(debug=True, dbfile="data/movies.db"):
 
     engine = create_engine(db_url, echo=debug)
 
-    # Test querying the movies table
+    # Test querying the users and movies table
     try:
         with engine.connect() as connection:
             result = connection.execute(text("""
             
                 SELECT * FROM movies
+                JOIN users ON users.id = movies.user_id
             
             """))
     except OperationalError:
@@ -44,9 +45,22 @@ def reset_schema():
             DROP TABLE IF EXISTS movies
 
         """))
+        connection.execute(text("""
+        
+            DROP TABLE IF EXISTS users
+        
+        """))
         connection.commit()
 
     with engine.connect() as connection:
+        connection.execute(text("""
+        
+            CREATE TABLE IF NOT EXISTS users(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT UNIQUE NOT NULL
+            )
+        
+        """))
         connection.execute(text("""
 
             CREATE TABLE IF NOT EXISTS movies (
@@ -54,10 +68,13 @@ def reset_schema():
                 title TEXT UNIQUE NOT NULL,
                 year INTEGER NOT NULL,
                 rating REAL NOT NULL,
-                poster_url
+                poster_url,
+                user_id INTEGER,
+                FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
             )
         
         """))
+
         connection.commit()
 
 
