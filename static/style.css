@@ -1,7 +1,23 @@
+@font-face {
+  font-family: 'SF Mono', monospace;
+  src: url(fonts/sf-mono/SFMonoBold.otf),
+       url(fonts/sf-mono/SFMonoBoldItalic.otf),
+       url(fonts/sf-mono/SFMonoHeavy.otf),
+       url(fonts/sf-mono/SFMonoHeavyItalic.otf),
+       url(fonts/sf-mono/SFMonoLight.otf),
+       url(fonts/sf-mono/SFMonoLightItalic.otf),
+       url(fonts/sf-mono/SFMonoMedium.otf),
+       url(fonts/sf-mono/SFMonoMediumItalic.otf),
+       url(fonts/sf-mono/SFMonoRegular.otf),
+       url(fonts/sf-mono/SFMonoRegularItalic.otf),
+       url(fonts/sf-mono/SFMonoSemibold.otf),
+       url(fonts/sf-mono/SFMonoSemiboldItalic.otf);
+}
+
 body {
   background: #F5F5F0;
   color: black;
-  font-family: Monaco;
+  font-family: Monaco, SFMono, monospace;
 }
 
 .list-movies-title {
