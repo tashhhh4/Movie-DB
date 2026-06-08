@@ -8,7 +8,7 @@ __pycache__/*
 *.png
 
 # Database file
-movies.db
+data/*
 
 # Hidden passwords
 secrets.py

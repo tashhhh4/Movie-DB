@@ -1,10 +1,11 @@
 from sqlalchemy import create_engine, text
+from sqlalchemy.exc import OperationalError
 from console import print_movie_dict
 
 engine = None
 
 
-def init_engine(debug=True, dbfile="movies.db"):
+def init_engine(debug=True, dbfile="data/movies.db"):
     """ Initialize the sql engine.
     Optional debug mode, generates verbose logging from SQL.
     Optional db filename parameter, useful for testing without destroying data.
@@ -14,6 +15,19 @@ def init_engine(debug=True, dbfile="movies.db"):
     db_url = f"sqlite:///{dbfile}"
 
     engine = create_engine(db_url, echo=debug)
+
+    # Test querying the movies table
+    try:
+        with engine.connect() as connection:
+            result = connection.execute(text("""
+            
+                SELECT * FROM movies
+            
+            """))
+    except OperationalError:
+        print("No database found. Initializing...")
+        reset_schema()
+        print("Ready!")
 
 
 def reset_schema():
