@@ -13,6 +13,7 @@ from db import (
     list_by_year,
     filter_movies,
 )
+from website import generate as generate_website
 from console import (
     space,
     print_header,
@@ -44,6 +45,7 @@ menu_choices = [
     ("Movies sorted by rating", list_by_rating),
     ("Movies sorted by year", list_by_year),
     ("Filter movies", filter_movies),
+    ("Generate website", generate_website),
 ]
 NUM_CHOICES = len(menu_choices)
 
