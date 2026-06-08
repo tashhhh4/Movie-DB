@@ -1,2 +1,2 @@
 def generate():
-    print("Generating website...")
+    print("Website was generated successfully. (Not yet implemented)")
