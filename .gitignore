@@ -4,9 +4,6 @@
 # Pycache
 __pycache__
 
-# Generated diagrams
-*.png
-
 # Database file
 data/*
 
@@ -15,3 +12,10 @@ secrets.py
 
 # Notes
 response_data.txt
+
+# Exclude generated content...
+*.png
+*.html
+
+# But include the template!
+!index_template.html
