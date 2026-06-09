@@ -147,6 +147,35 @@ def update_movie(title, rating):
             print(f"Error: {e}")
 
 
+# Users
+def add_user(name):
+    """ Adds a user. """
+    with engine.connect() as connection:
+        try:
+            connection.execute(text("""
+            
+                INSERT INTO users (name)
+                VALUES (:name)
+            
+            """), {"name": name})
+            connection.commit()
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+def list_users():
+    """ Retrieves all users from the database. """
+    with engine.connect() as connection:
+        result = connection.execute(text("""
+        
+            SELECT name FROM users
+        
+        """))
+        users = result.fetchall()
+
+    return [row[0] for row in users]
+
+
 # Tests
 if __name__ == "__main__":
     init_engine(dbfile="test.db", debug=False)

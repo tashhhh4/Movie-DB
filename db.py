@@ -11,14 +11,26 @@ from inputs import (
 )
 from movie_storage.movie_storage_sql import (
     list_movies as load_movies,
-    add_movie as add,
+    add_movie as new_movie,
     delete_movie as delete,
     update_movie as update,
+    add_user as new_user,
+    list_users,
     init_engine
 )
 from movie_lookup import get_movie_details
 
 init_engine(debug=False)
+
+
+def get_all_users():
+    """ Returns all the users. """
+    return list_users()
+
+
+def add_user(name):
+    """ Adds a new user. """
+    new_user(name)
 
 
 def get_all_movies():
@@ -58,7 +70,7 @@ def add_movie():
     except ValueError:
         rating = get_movie_rating(f"Enter missing rating for {title}: ")
 
-    add(title, year, rating, poster_url)
+    new_movie(title, year, rating, poster_url)
     print(f"Movie {title} successfully added.")
     print(f"Year: {year}")
     print(f"Rating (IMDB): {rating}")

@@ -1,3 +1,5 @@
+import db
+
 class UserManager: # Singleton
 
     _active_user = None
@@ -18,16 +20,13 @@ class UserManager: # Singleton
     
     @classmethod
     def create_user(cls, user_name):
-        # Use DB to create a new user
-        # Error if a user with the same name already exists
-        print(f"We want to add '{user_name}' (Not yet implemented).")
+        users = db.get_all_users()
+        if user_name in users:
+            print(f"A user with the name\"{user_name}\" already exists. Please choose a different name.")
+            return
+        db.add_user(user_name)
+        print(f"User {user_name} was created.")
 
     @classmethod
     def get_all_users(cls):
-        # Use DB to lookup users
-        # convert to simple list of strings
-
-        #temp
-        users = ["Natasha", "Dan", "Laura"]
-
-        return users
+        return db.get_all_users()
