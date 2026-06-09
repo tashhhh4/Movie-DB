@@ -1,6 +1,7 @@
 import sys
 
 from db import (
+    get_all_movies,
     list_all_movies,
     add_movie,
     delete_movie,
@@ -16,6 +17,7 @@ from db import (
 from website import generate as generate_website
 from console import (
     space,
+    err,
     print_header,
     print_rainbow,
     show_menu_choices,
@@ -44,14 +46,15 @@ QUIT_CHOICE = ("(Exit)", exit_app)
 
 # Login Menu
 LOGIN_MENU_HEADING = "Welcome to the Movie App! 🎬"
-def make_login_function(user_name):
+def make_login_function(user):
     def login():
-        UserManager.login(user_name)
-        print(f"Logged in as {user_name}.")
+        UserManager.login(user["id"])
+        print(f"Logged in as {user["name"]}.")
         set_should_flash_title(True)
     return login
 
 def create_user() :
+    """ Adds a new user. """
     name = get_user_input("Enter new user name: ")
     UserManager.create_user(name)
 
@@ -63,8 +66,8 @@ def show_login_menu():
 
     users = UserManager.get_all_users()
     choices = [QUIT_CHOICE]
-    for user_name in users:
-        choices.append((user_name, make_login_function(user_name)))
+    for user in users:
+        choices.append((user["name"], make_login_function(user)))
     choices.append(("Create new user", create_user))
 
     show_menu_choices(choices)
@@ -75,7 +78,7 @@ def show_login_menu():
 def logout():
     user = UserManager.get_user()
     UserManager.logout()
-    print("Logged out {user}.")
+    print(f"Logged out {user["name"]}.")
     set_should_flash_title(True)
 
 command_choices = [
@@ -98,10 +101,10 @@ command_choices = [
 def show_commands_menu():
     """ Prints the main menu. """
     user = UserManager.get_user()
-    print_rainbow(f"Welcome back, {user}!")
-    user_movies = []
+    print_rainbow(f"Welcome back, {user["name"]}!")
+    user_movies = get_all_movies()
     if not user_movies:
-        print(f"{user}, your movie collection is empty. Add some movies!")
+        err(f"{user["name"]}, your movie collection is empty. Add some movies!")
     space()
     print("Menu:")
     show_menu_choices(command_choices)

@@ -1,6 +1,7 @@
 import style
 from console import err
 from movie_storage.movie_storage_sql import list_movies as get_movies
+from users import UserManager
 
 
 # General input wrapper function
@@ -18,7 +19,8 @@ def get_movie_title(prompt):
     """ Gets a movie title.
         - Can't be empty
     """
-    movies = get_movies()
+    user = UserManager.get_user()
+    movies = get_movies(user["id"])
     while True:
         title = get_user_input(prompt)
         if title == "":

@@ -5,10 +5,9 @@ class UserManager: # Singleton
     _active_user = None
 
     @classmethod
-    def login(cls, user_name):
-        # Check that the user is real from the DB
-        # error if user not found
-        cls._active_user = user_name
+    def login(cls, user_id):
+        user = db.get_user(user_id)
+        cls._active_user = user
 
     @classmethod
     def logout(cls):

@@ -65,7 +65,7 @@ def reset_schema():
 
             CREATE TABLE IF NOT EXISTS movies (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT UNIQUE NOT NULL,
+                title TEXT NOT NULL,
                 year INTEGER NOT NULL,
                 rating REAL NOT NULL,
                 poster_url,
@@ -78,38 +78,42 @@ def reset_schema():
         connection.commit()
 
 
-def list_movies():
-    """ Retrieve all movies from the database. """
+def list_movies(user_id):
+    """ Retrieve all of a user's movies from the database. """
     with engine.connect() as connection:
         result = connection.execute(text("""
         
-            SELECT title, year, rating, poster_url FROM movies
+            SELECT title, year, rating, poster_url, id
+            FROM movies
+            WHERE user_id = :user_id
         
-        """))
+        """), {"user_id": user_id})
         movies = result.fetchall()
 
     return {row[0]: {
         "year": row[1],
         "rating": row[2],
-        "poster_url": row[3]
+        "poster_url": row[3],
+        "id": row[4],
         } for row in movies
     }
 
 
-def add_movie(title, year, rating, poster_url):
+def add_movie(title, year, rating, poster_url, user_id):
     """ Add a new movie to the database. """
     with engine.connect() as connection:
         try:
             connection.execute(text("""
             
-                INSERT INTO movies (title, year, rating, poster_url)
-                VALUES (:title, :year, :rating, :poster_url)
+                INSERT INTO movies (title, year, rating, poster_url, user_id)
+                VALUES (:title, :year, :rating, :poster_url, :user_id)
             
             """), {
                     "title": title,
                     "year": year,
                     "rating": rating,
-                    "poster_url": poster_url
+                    "poster_url": poster_url,
+                    "user_id": user_id,
                 }
             )
             connection.commit()
@@ -117,31 +121,31 @@ def add_movie(title, year, rating, poster_url):
             print(f"Error: {e}")
 
 
-def delete_movie(title):
+def delete_movie(movie_id):
     """ Delete a movie from the database. """
     with engine.connect() as connection:
         try:
             connection.execute(text("""
             
                 DELETE FROM movies
-                WHERE title = :title
+                WHERE id = :movie_id
             
-            """), {"title": title})
+            """), {"movie_id": movie_id})
             connection.commit()
         except Exception as e:
             print(f"Error: {e}")
 
 
-def update_movie(title, rating):
+def update_movie(movie_id, rating):
     """ Update the rating of a movie in the database. """
     with engine.connect() as connection:
         try:
             connection.execute(text("""
             
                 UPDATE movies SET rating = :rating
-                WHERE title = :title
+                WHERE id = :movie_id
             
-            """), {"title": title, "rating": rating})
+            """), {"movie_id": movie_id, "rating": rating})
             connection.commit()
         except Exception as e:
             print(f"Error: {e}")
@@ -163,17 +167,34 @@ def add_user(name):
             print(f"Error: {e}")
 
 
+def get_user(user_id):
+    """ Retrieves a single user by id. """
+    with engine.connect() as connection:
+        result = connection.execute(text("""
+        
+            SELECT id, name
+            FROM users
+            WHERE id = :user_id
+        
+        """), {"user_id": user_id})
+        users = result.fetchall()
+        if not users:
+            print("User not found!")
+            return
+    return {"id": users[0][0], "name": users[0][1]}
+
+
 def list_users():
     """ Retrieves all users from the database. """
     with engine.connect() as connection:
         result = connection.execute(text("""
         
-            SELECT name FROM users
+            SELECT id, name FROM users
         
         """))
         users = result.fetchall()
 
-    return [row[0] for row in users]
+    return [{"id": u[0], "name": u[1]} for u in users]
 
 
 # Tests

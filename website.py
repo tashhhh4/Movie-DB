@@ -1,5 +1,6 @@
 import os
 from db import get_all_movies
+from users import UserManager
 
 
 OUTPUT_DIR = "output"
@@ -40,14 +41,12 @@ def get_movies():
 
 # Website Generator
 def generate():
+    user = UserManager.get_user()
     movies = get_movies()
 
-    username = "Tasha"
-    # username = None
-
-    if username:
-        user_heading = f'{username}\'s Favorites'
-        filename = f"movies_{username}.html"
+    if user:
+        user_heading = f'{user["name"]}\'s Favorites'
+        filename = f"movies_{user["name"]}.html"
     else:
         user_heading = ''
         filename = "movies.html"
@@ -58,6 +57,7 @@ def generate():
 
     html = load_text(TEMPLATE_FILE)
     css = load_text(STYLE_FILE)
+
     html = html.replace("__TEMPLATE_TITLE__", APP_TITLE)
     html = html.replace("__CSS_STYLE__", css)
     html = html.replace("__USER_HEADING__", user_heading)

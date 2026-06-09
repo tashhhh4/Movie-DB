@@ -15,10 +15,12 @@ from movie_storage.movie_storage_sql import (
     delete_movie as delete,
     update_movie as update,
     add_user as new_user,
+    get_user as retrieve_user,
     list_users,
     init_engine
 )
 from movie_lookup import get_movie_details
+from users import UserManager
 
 init_engine(debug=False)
 
@@ -28,19 +30,28 @@ def get_all_users():
     return list_users()
 
 
+def get_user(user_id):
+    """ Gets a user by id. """
+    user = retrieve_user(user_id)
+    return user
+
+
 def add_user(name):
     """ Adds a new user. """
     new_user(name)
 
 
 def get_all_movies():
-    """ Returns all the movies as a list. """
-    return load_movies()
+    """ Returns all of a user's movies as a list. """
+    user = UserManager.get_user()
+    return load_movies(user["id"])
 
 
 def list_all_movies():
     """ Prints all the movies in a vertical list. """
-    movies = load_movies()
+    user = UserManager.get_user()
+
+    movies = load_movies(user["id"])
     num_movies = len(movies)
     s = "" if num_movies == 1 else "s"
 
@@ -54,6 +65,7 @@ def add_movie():
     Automatically fills in title with corrected spelling, year, and IMDB rating.
     Prompts user if automatic lookup fails to find a rating.
     """
+    user = UserManager.get_user()
 
     title = get_movie_title("Enter movie name: ")
 
@@ -70,7 +82,7 @@ def add_movie():
     except ValueError:
         rating = get_movie_rating(f"Enter missing rating for {title}: ")
 
-    new_movie(title, year, rating, poster_url)
+    new_movie(title, year, rating, poster_url, user["id"])
     print(f"Movie {title} successfully added.")
     print(f"Year: {year}")
     print(f"Rating (IMDB): {rating}")
@@ -81,14 +93,20 @@ def delete_movie():
     """ Removes the movie with the matching title from the database.
         Prints an error if the movie doesn't exist.
     """
-    movies = load_movies()
+    user = UserManager.get_user()
+
+    movies = load_movies(user["id"])
 
     title = get_user_input("Enter movie name to delete: ")
-    if title not in movies:
+
+    try:
+        movie_id = movies[title]["id"]
+    except KeyError:
         err(f"Movie {title} doesn't exist!")
         return
+    
+    delete(movie_id)
 
-    delete(title)
     print(f"Movie {title} successfully deleted.")
 
 
@@ -96,16 +114,21 @@ def update_movie():
     """ Update the rating of an existing movie.
         Prints an error if the movie doesn't exist.
     """
-    movies = load_movies()
+    user = UserManager.get_user()
+
+    movies = load_movies(user["id"])
 
     title = get_user_input("Enter movie name: ")
-    if title not in movies:
+
+    try:
+        movie_id = movies[title]["id"]
+    except KeyError:
         err(f"Movie {title} doesn't exist!")
         return
 
     rating = get_movie_rating("Enter new rating: ")
 
-    update(title, rating)
+    update(movie_id, rating)
     print(f"Movie {title} successfully updated.")
 
 
@@ -116,7 +139,9 @@ def stats():
         - Best rated movie(s)
         - Worst rated movie(s)
     """
-    movies = load_movies()
+    user = UserManager.get_user()
+
+    movies = load_movies(user["id"])
 
     details = movies.values()
     ratings = [item["rating"] for item in details]
@@ -127,15 +152,17 @@ def stats():
     worst_movie_title = min(movies, key=lambda k: movies[k]["rating"])
     worst_movie_rating = movies[worst_movie_title]["rating"]
 
-    print(f"Average rating: {average_rating}")
-    print(f"Median rating: {median_rating}")
+    print(f"Average rating: {average_rating:.1f}")
+    print(f"Median rating: {median_rating:.1f}")
     print(f"Best movie: {best_movie_title}, {best_movie_rating}")
     print(f"Worst movie: {worst_movie_title}, {worst_movie_rating}")
 
 
 def random_movie():
     """ Print a random movie with its rating. """
-    movies = load_movies()
+    user = UserManager.get_user()
+
+    movies = load_movies(user["id"])
 
     titles_list = list(movies.keys())
     index = random.randrange(0, len(titles_list))
@@ -149,7 +176,9 @@ def random_movie():
 
 def search_movie():
     """ All movies that match the query are printed, with their ratings. """
-    movies = load_movies()
+    user = UserManager.get_user()
+
+    movies = load_movies(user["id"])
 
     query = get_user_input("Enter part of movie name: ")
 
@@ -163,7 +192,8 @@ def search_movie():
 
 def list_by_rating():
     """ Prints all the movies, sorted by rating from highest to lowest. """
-    movies = load_movies()
+    user = UserManager.get_user()
+    movies = load_movies(user["id"])
     while len(movies) > 0:
         highest_rated = max(movies, key=lambda k: movies[k]["rating"])
         print_movie_dict(highest_rated, movies[highest_rated])
@@ -176,7 +206,8 @@ def list_by_year():
     """
     order_by_newest = get_y_n("Do you want the latest movies first? (Y/N) ")
 
-    movies = load_movies()
+    user = UserManager.get_user()
+    movies = load_movies(user["id"])
     while len(movies) > 0:
         sort_func = max if order_by_newest else min
         next_movie = sort_func(movies, key=lambda k: movies[k]["year"])
@@ -194,7 +225,8 @@ def filter_movies():
                               optional=True)
     space()
 
-    movies = load_movies()
+    user = UserManager.get_user()
+    movies = load_movies(user["id"])
     filtered_movies = {}
     for title, details in movies.items():
         valid = True
@@ -215,7 +247,9 @@ def filter_movies():
 
 def export_histogram():
     """ Saves a histogram as a .png in the local file storage. """
-    movies = load_movies()
+    user = UserManager.get_user()
+
+    movies = load_movies(user["id"])
 
     ratings = [item["rating"] for key, item in movies.items()]
 
