@@ -2,10 +2,11 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
 from console import print_movie_dict
 
+DEBUG = False
+DBFILE = "data/movies.db"
 engine = None
 
-
-def init_engine(debug=True, dbfile="data/movies.db"):
+def init_engine(debug=DEBUG, dbfile=DBFILE):
     """ Initialize the sql engine.
     Optional debug mode, generates verbose logging from SQL.
     Optional db filename parameter, useful for testing without destroying data.
@@ -197,9 +198,14 @@ def list_users():
     return [{"id": u[0], "name": u[1]} for u in users]
 
 
+# Init
+if __name__ != "__main__":
+    init_engine()
+
+
 # Tests
 if __name__ == "__main__":
-    init_engine(dbfile="test.db", debug=False)
+    init_engine(dbfile="data/test.db", debug=False)
     print("sql engine initialized as", engine)
 
     add_movie("Example Movie", 2000, 5.0, "https://www.youtube.com/watch?v=5SZYz7lZRRI")

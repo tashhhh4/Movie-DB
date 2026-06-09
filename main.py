@@ -1,19 +1,6 @@
 import sys
-
-from db import (
-    get_all_movies,
-    list_all_movies,
-    add_movie,
-    delete_movie,
-    update_movie,
-    stats,
-    random_movie,
-    search_movie,
-    list_by_rating,
-    export_histogram,
-    list_by_year,
-    filter_movies,
-)
+import movies as MovieManager
+from users import UserManager
 from website import generate as generate_website
 from console import (
     space,
@@ -24,25 +11,27 @@ from console import (
     execute_user_choice,
 )
 from inputs import get_user_input
-from users import UserManager
 
 
-def exit_app():
-    """ Exits the application. """
-    print("Bye!")
-    sys.exit()
-
+# Program settings
 PROGRAM_TITLE = "My Movies Database"
 
+QUIT_COMMANDS = ["quit", "leave", "goodbye", "exit", "stop"]
+
+
+# Extra utils
 should_flash_title = True
 def set_should_flash_title(should):
     """ Setter method for global signal. """
     global should_flash_title
     should_flash_title = should
 
-QUIT_COMMANDS = ["quit", "leave", "goodbye", "exit", "stop"]
-
+def exit_app():
+    """ Exits the application. """
+    print("Bye!")
+    sys.exit()
 QUIT_CHOICE = ("(Exit)", exit_app)
+
 
 # Login Menu
 LOGIN_MENU_HEADING = "Welcome to the Movie App! 🎬"
@@ -74,35 +63,36 @@ def show_login_menu():
     space()
     return choices
 
+
 # Commands Menu
 def logout():
-    user = UserManager.get_user()
+    user = UserManager.get_current_user()
     UserManager.logout()
     print(f"Logged out {user["name"]}.")
     set_should_flash_title(True)
 
 command_choices = [
-    QUIT_CHOICE,
-    ("List movies", list_all_movies),
-    ("Add movie", add_movie),
-    ("Delete movie", delete_movie),
-    ("Update movie", update_movie),
-    ("Stats", stats),
-    ("Create rating histogram", export_histogram),
-    ("Random movie", random_movie),
-    ("Search movie", search_movie),
-    ("Movies sorted by rating", list_by_rating),
-    ("Movies sorted by year", list_by_year),
-    ("Filter movies", filter_movies),
-    ("Generate website", generate_website),
-    ("Switch user", logout),
+    (QUIT_CHOICE[0],            QUIT_CHOICE[1]),
+    ("List movies",             MovieManager.list_all_movies),
+    ("Add movie",               MovieManager.add_movie),
+    ("Delete movie",            MovieManager.delete_movie),
+    ("Update movie",            MovieManager.update_movie),
+    ("Stats",                   MovieManager.stats),
+    ("Create rating histogram", MovieManager.export_histogram),
+    ("Random movie",            MovieManager.random_movie),
+    ("Search movie",            MovieManager.search_movie),
+    ("Movies sorted by rating", MovieManager.list_by_rating),
+    ("Movies sorted by year",   MovieManager.list_by_year),
+    ("Filter movies",           MovieManager.filter_movies),
+    ("Generate website",        generate_website),
+    ("Switch user",             logout),
 ]
 
 def show_commands_menu():
     """ Prints the main menu. """
-    user = UserManager.get_user()
+    user = UserManager.get_current_user()
     print_rainbow(f"Welcome back, {user["name"]}!")
-    user_movies = get_all_movies()
+    user_movies = MovieManager.get_all_movies()
     if not user_movies:
         err(f"{user["name"]}, your movie collection is empty. Add some movies!")
     space()
@@ -114,11 +104,10 @@ def show_commands_menu():
 
 def show_menu():
     """ Prints either the login menu or the commands menu.
-        Returns the list of choices used,
-        and the number of choices available,
+        Returns the list of choices and number of available choices.
     """
     users = UserManager.get_all_users()
-    current_user = UserManager.get_user()
+    current_user = UserManager.get_current_user()
 
     if current_user is None:
         show = show_login_menu

@@ -1,5 +1,5 @@
 import os
-from db import get_all_movies
+import movies as MovieManager
 from users import UserManager
 
 
@@ -28,7 +28,7 @@ def load_text(filename):
 # Movie List Helper
 def get_movies():
     movie_list = []
-    movie_dict = get_all_movies()
+    movie_dict = MovieManager.get_all_movies()
     for key, item in movie_dict.items():
         movie_list.append({
             "title": key,
@@ -41,7 +41,7 @@ def get_movies():
 
 # Website Generator
 def generate():
-    user = UserManager.get_user()
+    user = UserManager.get_current_user()
     movies = get_movies()
 
     if user:

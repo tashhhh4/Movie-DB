@@ -19,7 +19,7 @@ def get_movie_title(prompt):
     """ Gets a movie title.
         - Can't be empty
     """
-    user = UserManager.get_user()
+    user = UserManager.get_current_user()
     movies = get_movies(user["id"])
     while True:
         title = get_user_input(prompt)
