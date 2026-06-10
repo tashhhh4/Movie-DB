@@ -12,6 +12,7 @@ secrets.py
 
 # Notes
 response_data.txt
+notes.txt
 
 # Exclude generated content...
 output
