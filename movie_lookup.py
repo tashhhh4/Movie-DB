@@ -4,6 +4,10 @@ import secrets
 API_URL = "http://www.omdbapi.com/"
 
 
+def get_movie_link(imdb_id):
+    return f"https://www.imdb.com/title/{imdb_id}/"
+
+
 def get_movie_details(title_search):
     """ Searches OMDB API for the movie most relevant to the `title`.
     Provides the full title and year of the top match.
@@ -22,12 +26,13 @@ def get_movie_details(title_search):
                 print("Movie lookup error: Movie not found!")
                 return
 
-        return (
-            data["Title"],
-            data["Year"],
-            data["imdbRating"],
-            data["Poster"]
-        )
+        return {
+            "title": data["Title"],
+            "year": data["Year"],
+            "rating": data["imdbRating"],
+            "poster_url": data["Poster"],
+            "imdb_id": data["imdbID"],
+        }
     
     except AttributeError:
         print("Movie lookup error: API Key is missing! "

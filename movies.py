@@ -1,7 +1,7 @@
 import statistics
 import random
 from matplotlib import pyplot
-from console import err, space, print_rainbow, print_movie_dict
+from console import err, space, print_rainbow
 from inputs import (
     get_user_input,
     get_movie_title,
@@ -10,10 +10,26 @@ from inputs import (
     get_y_n,
 )
 import movie_storage.movie_storage_sql as db
-from movie_lookup import get_movie_details
+from movie_lookup import get_movie_details, get_movie_link
 from users import UserManager
 
 
+# Printers
+def print_movie_dict(title, details):
+    """ Prints one movie along with its year and rating. """
+    year = f" ({details['year']})" if details["year"] else ""
+    print(f"{title}{year}: {details['rating']:.1f}")
+
+def print_detailed_movie_dict(title, details):
+    """ Prints a movie with all of the information. """
+    print(f"Year: {details["year"]}")
+    print(f"Rating: {details["rating"]}")
+    print(f"IMBD Page: {get_movie_link(details["imdb_id"])}")
+    print(f"Poster Image: {details["poster_url"]}")
+    print(f"Note: {details["note"]}")
+
+
+# CRUD
 def get_all_movies():
     """ Returns all of a user's movies as a list. """
     user = UserManager.get_current_user()
@@ -47,21 +63,28 @@ def add_movie():
         print("Couldn't add movie.")
         return
 
-    title, year, rating, poster_url = details
-
     try:
-        rating = float(rating)
+        rating = float(details["rating"])
     except ValueError:
         rating = get_movie_rating(f"Enter missing rating for {title}: ")
-    
-    note = get_user_input("Enter movie note (optional): ")
+    details["rating"] = rating
 
-    db.add_movie(title, year, rating, poster_url, user["id"], note)
-    print(f"Movie {title} successfully added.")
-    print(f"Year: {year}")
-    print(f"Rating (IMDB): {rating}")
-    print(f"Poster: {poster_url}")
-    print(f"Note: {note}")
+    note = get_user_input("Enter movie note (optional): ")
+    details["note"] = note
+
+    db.add_movie(
+        title,
+        details["year"],
+        details["rating"],
+        details["poster_url"],
+        user["id"],
+        details["note"],
+        details["imdb_id"]
+    )
+
+    print(f"Movie successfully added!")
+    space()
+    print_detailed_movie_dict(title, details)
 
 
 def delete_movie():
@@ -95,29 +118,28 @@ def update_movie():
     title = get_user_input("Enter movie name: ")
 
     try:
-        movie = movies[title]
-        print(f"Year: {movie["year"]}")
-        print(f"Rating: {movie["rating"]}")
-        print(f"Note: {movie["note"]}")
+        details = movies[title]
+        print_detailed_movie_dict(title, details)
 
         rating = get_movie_rating("Enter new movie rating: ", optional=True)
         if rating is None:
-            rating = movie["rating"]
+            rating = details["rating"]
         note = get_user_input("Enter new movie note: ")
         if note == '':
-            note = movie["note"]
+            note = details["note"]
 
-        if rating == movie["rating"] and note == movie["note"]:
+        if rating == details["rating"] and note == details["note"]:
             print("No changes made.")
             return
 
-        db.update_movie(movie["id"], rating, note)
+        db.update_movie(details["id"], rating, note)
         print(f"Movie {title} successfully updated.")
 
     except KeyError as e:
         print(e)
         err(f"Movie {title} doesn't exist!")
         return
+
 
 def stats():
     """ Prints statistics about your entire dataset.

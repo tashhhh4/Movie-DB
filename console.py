@@ -42,12 +42,6 @@ def print_header(text, width):
     print(style.LPURP + '*' * num_stars_right + style.ENDC)
 
 
-def print_movie_dict(title, details):
-    """ Prints one movie along with its year and rating. """
-    year = f" ({details['year']})" if details["year"] else ""
-    print(f"{title}{year}: {details['rating']:.1f}")
-
-
 def show_menu_choices(choice_list):
     """
         Args:

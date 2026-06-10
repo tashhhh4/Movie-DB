@@ -2,6 +2,7 @@ import os
 import movies as MovieManager
 from users import UserManager
 from utils import ensure_dir
+from movie_lookup import get_movie_link
 
 
 OUTPUT_DIR = ensure_dir("output")
@@ -37,6 +38,7 @@ def get_movies():
             "rating": item["rating"],
             "year": item["year"],
             "note": item["note"],
+            "imdb_id": item["imdb_id"],
         })
     return movie_list
 
@@ -58,11 +60,13 @@ def generate():
         list_items += (
             '<li> '
             '  <div class="movie"> '
-            '    <img class="movie-poster" '
-           f'        src="{movie["poster_url"]}" '
-           f'        alt="Poster for {movie["title"]}" '
-           f'        title="{movie["note"]}" '
-            '    > '
+           f'    <a href="{get_movie_link(movie["imdb_id"])}"> '
+            '      <img class="movie-poster" '
+           f'          src="{movie["poster_url"]}" '
+           f'          alt="Poster for {movie["title"]}" '
+           f'          title="{movie["note"]}" '
+            '      > '
+            '    </a> '
             '    <div class="movie-info"> '
             '      <div class="movie-info-header"> '
            f'        <span class="movie-title">{movie["title"]}</span> '

@@ -1,7 +1,6 @@
 import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
-from console import print_movie_dict
 from utils import ensure_dir
 
 DEBUG = False
@@ -76,6 +75,7 @@ def reset_schema():
                 poster_url,
                 user_id INTEGER NOT NULL,
                 note TEXT,
+                imdb_id TEXT,
                 FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
             )
         
@@ -89,7 +89,7 @@ def list_movies(user_id):
     with engine.connect() as connection:
         result = connection.execute(text("""
         
-            SELECT title, year, rating, poster_url, id, note
+            SELECT title, year, rating, poster_url, id, note, imdb_id
             FROM movies
             WHERE user_id = :user_id
         
@@ -102,18 +102,21 @@ def list_movies(user_id):
         "poster_url": row[3],
         "id": row[4],
         "note": row[5],
+        "imdb_id": row[6],
         } for row in movies
     }
 
 
-def add_movie(title, year, rating, poster_url, user_id, note):
+def add_movie(title, year, rating, poster_url, user_id, note, imdb_id):
     """ Add a new movie to the database. """
     with engine.connect() as connection:
         try:
             connection.execute(text("""
             
-                INSERT INTO movies (title, year, rating, poster_url, user_id, note)
-                VALUES (:title, :year, :rating, :poster_url, :user_id, :note)
+                INSERT INTO movies
+                    (title, year, rating, poster_url, user_id, note, imdb_id)
+                VALUES
+                    (:title, :year, :rating, :poster_url, :user_id, :note, :imdb_id)
             
             """), {
                     "title": title,
@@ -122,6 +125,7 @@ def add_movie(title, year, rating, poster_url, user_id, note):
                     "poster_url": poster_url,
                     "user_id": user_id,
                     "note": note,
+                    "imdb_id": imdb_id,
                 }
             )
             connection.commit()
@@ -223,7 +227,7 @@ if __name__ == "__main__":
 
     for title, details in list_movies().items():
         print("    ", end="")
-        print_movie_dict(title, details)
+        # print_movie_dict(title, details)
 
     update_movie("Example Movie", 10.0)
     update_movie("Other Movie", 1.0)
@@ -232,7 +236,7 @@ if __name__ == "__main__":
 
     for title, details in list_movies().items():
         print("    ", end="")
-        print_movie_dict(title, details)
+        # print_movie_dict(title, details)
 
     delete_movie("Example Movie")
     delete_movie("Other Movie")
