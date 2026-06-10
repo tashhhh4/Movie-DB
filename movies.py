@@ -42,7 +42,13 @@ def add_movie():
 
     title = get_movie_title("Enter movie name: ")
 
-    details = get_movie_details(title)
+    try:
+        details = get_movie_details(title)
+    except AttributeError:
+        print("Unable to fetch movie details because API Key is missing! "
+              "Please create the value `API_KEY = \"<your_api_key_here>\"` in `secrets.py`. "
+              "See the README file for further details.\n\n(Movie was not added.)")
+        return
 
     if not details:
         print(f"Movie {title} was not found.")

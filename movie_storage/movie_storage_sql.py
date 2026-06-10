@@ -1,9 +1,15 @@
+import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
 from console import print_movie_dict
 
 DEBUG = False
-DBFILE = "data/movies.db"
+DBDIR = 'data'
+DBFILE = os.path.join(DBDIR, 'movies.db')
+
+if not os.path.exists(DBDIR):
+    os.makedirs(DBDIR)
+
 engine = None
 
 def init_engine(debug=DEBUG, dbfile=DBFILE):
