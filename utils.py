@@ -45,7 +45,7 @@ def get_country_flag(country_name):
 
     if "status" in data and data["status"] == 404:
         return None
-    
+
     country = data[0]
 
     if "flags" not in country:

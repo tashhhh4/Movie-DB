@@ -34,7 +34,7 @@ def get_movie_details(title_search):
             "imdb_id": data["imdbID"],
             "country": data["Country"],
         }
-    
+
     except AttributeError:
         print("Movie lookup error: API Key is missing! "
               "Please create the value `API_KEY = \"<your_api_key_here>\"` in `secrets.py`. "
@@ -50,4 +50,3 @@ if __name__ == "__main__":
 
     details = get_movie_details("fake movie that doesn't exist`")
     print(details)
-    

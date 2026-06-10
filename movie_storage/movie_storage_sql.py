@@ -23,7 +23,7 @@ def init_engine(debug=DEBUG, dbfile=DBFILE):
     # Test querying the users and movies table
     try:
         with engine.connect() as connection:
-            result = connection.execute(text("""
+            connection.execute(text("""
             
                 SELECT * FROM movies
                 JOIN users ON users.id = movies.user_id

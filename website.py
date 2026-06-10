@@ -1,8 +1,8 @@
 import os
 import movies.manager as MovieManager
-from users import UserManager
-from utils import ensure_dir, get_country_flag
 from movies.lookup import get_movie_link
+from users.manager import UserManager
+from utils import ensure_dir, get_country_flag
 
 
 OUTPUT_DIR = ensure_dir("output")
@@ -55,7 +55,7 @@ def generate():
     else:
         user_heading = ''
         filename = "movies.html"
-    
+
     list_items = ''
     for movie in movies:
         flag = get_country_flag(movie["country"])
@@ -97,7 +97,7 @@ def generate():
     html = html.replace("__USER_HEADING__", user_heading)
     html = html.replace("__TEMPLATE_MOVIE_GRID__", list_items)
 
-    output_file = os.path.join(OUTPUT_DIR, filename) 
-    save_webpage(output_file, html)    
+    output_file = os.path.join(OUTPUT_DIR, filename)
+    save_webpage(output_file, html)
 
     print("Website was generated successfully.")

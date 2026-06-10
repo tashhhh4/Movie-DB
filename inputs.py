@@ -1,7 +1,7 @@
 import style
-from console import err
 from movie_storage.movie_storage_sql import list_movies as get_movies
-from users import UserManager
+from users.manager import UserManager
+from console import err
 
 
 # General input wrapper function

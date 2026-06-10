@@ -1,7 +1,6 @@
 import sys
 import movies.manager as MovieManager
-from users import UserManager
-from website import generate as generate_website
+from users.manager import UserManager
 from console import (
     space,
     err,
@@ -11,6 +10,7 @@ from console import (
     execute_user_choice,
 )
 from inputs import get_user_input
+from website import generate as generate_website
 
 
 # Program settings
@@ -106,14 +106,13 @@ def show_menu():
     """ Prints either the login menu or the commands menu.
         Returns the list of choices and number of available choices.
     """
-    users = UserManager.get_all_users()
     current_user = UserManager.get_current_user()
 
     if current_user is None:
         show = show_login_menu
     else:
         show = show_commands_menu
-    
+
     choices = show()
     num_choices = len(choices)
     if num_choices == 0:

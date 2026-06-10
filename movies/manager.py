@@ -1,6 +1,8 @@
-import statistics
 import random
+import statistics
 from matplotlib import pyplot
+import movie_storage.movie_storage_sql as db
+from users.manager import UserManager
 from console import err, space, print_rainbow
 from inputs import (
     get_user_input,
@@ -9,9 +11,7 @@ from inputs import (
     get_movie_year,
     get_y_n,
 )
-import movie_storage.movie_storage_sql as db
 from .lookup import get_movie_details, get_movie_link
-from users import UserManager
 
 
 # Printers
@@ -22,6 +22,7 @@ def print_movie_dict(title, details):
 
 def print_detailed_movie_dict(title, details):
     """ Prints a movie with all of the information. """
+    print(f"Title: {title}")
     print(f"Year: {details["year"]}")
     print(f"Country: {details["country"]}")
     print(f"Rating: {details["rating"]}")
@@ -74,7 +75,7 @@ def add_movie():
     details["note"] = note
 
     db.add_movie(
-        title,
+        details["title"],
         details["year"],
         details["rating"],
         details["poster_url"],
@@ -84,9 +85,9 @@ def add_movie():
         details["country"],
     )
 
-    print(f"Movie successfully added!")
+    print("Movie successfully added!")
     space()
-    print_detailed_movie_dict(title, details)
+    print_detailed_movie_dict(details["title"], details)
 
 
 def delete_movie():
@@ -121,7 +122,9 @@ def update_movie():
 
     try:
         details = movies[title]
+        space()
         print_detailed_movie_dict(title, details)
+        space()
 
         rating = get_movie_rating("Enter new movie rating: ", optional=True)
         if rating is None:
@@ -138,7 +141,6 @@ def update_movie():
         print(f"Movie {title} successfully updated.")
 
     except KeyError as e:
-        print(e)
         err(f"Movie {title} doesn't exist!")
         return
 
