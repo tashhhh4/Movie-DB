@@ -1,5 +1,5 @@
 import sys
-import movies as MovieManager
+import movies.manager as MovieManager
 from users import UserManager
 from website import generate as generate_website
 from console import (

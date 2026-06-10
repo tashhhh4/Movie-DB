@@ -1,8 +1,8 @@
 import os
-import movies as MovieManager
+import movies.manager as MovieManager
 from users import UserManager
 from utils import ensure_dir
-from movie_lookup import get_movie_link
+from movies.lookup import get_movie_link
 
 
 OUTPUT_DIR = ensure_dir("output")

@@ -10,7 +10,7 @@ from inputs import (
     get_y_n,
 )
 import movie_storage.movie_storage_sql as db
-from movie_lookup import get_movie_details, get_movie_link
+from .lookup import get_movie_details, get_movie_link
 from users import UserManager
 
 
