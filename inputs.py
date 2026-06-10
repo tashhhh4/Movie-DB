@@ -8,7 +8,7 @@ from users import UserManager
 
 def get_user_input(prompt):
     """ Gets user input and differentiates user's input with a cyan style. """
-    user_input = input(prompt + style.CYAN)
+    user_input = input(prompt + style.CYAN).strip()
     print(style.ENDC, end="")
     return user_input
 

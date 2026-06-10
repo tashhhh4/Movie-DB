@@ -9,21 +9,31 @@ def get_movie_details(title_search):
     Provides the full title and year of the top match.
     Can also return None if no match is found.
     """
-    response = requests.get(f"{API_URL}?apikey={secrets.API_KEY}&t={title_search}")
-    data = response.json()
+    try:
+        response = requests.get(f"{API_URL}?apikey={secrets.API_KEY}&t={title_search}")
+        data = response.json()
 
-    found_movie = data["Response"] == "True"
+        if "Error" in data:
+            if data["Error"] == "Invalid API key!":
+                print("Movie lookup error: Invalid API key!")
+                return
 
-    if not found_movie:
-        return None
+            if data["Error"] == "Movie not found!":
+                print("Movie lookup error: Movie not found!")
+                return
 
-
-    return (
-        data["Title"],
-        data["Year"],
-        data["imdbRating"],
-        data["Poster"]
-    )
+        return (
+            data["Title"],
+            data["Year"],
+            data["imdbRating"],
+            data["Poster"]
+        )
+    
+    except AttributeError:
+        print("Movie lookup error: API Key is missing! "
+              "Please create the value `API_KEY = \"<your_api_key_here>\"` in `secrets.py`. "
+              "See the README file for further details.")
+        return
 
 # Tests
 if __name__ == "__main__":

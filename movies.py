@@ -42,16 +42,9 @@ def add_movie():
 
     title = get_movie_title("Enter movie name: ")
 
-    try:
-        details = get_movie_details(title)
-    except AttributeError:
-        print("Unable to fetch movie details because API Key is missing! "
-              "Please create the value `API_KEY = \"<your_api_key_here>\"` in `secrets.py`. "
-              "See the README file for further details.\n\n(Movie was not added.)")
-        return
-
+    details = get_movie_details(title)
     if not details:
-        print(f"Movie {title} was not found.")
+        print("Couldn't add movie.")
         return
 
     title, year, rating, poster_url = details
@@ -60,12 +53,15 @@ def add_movie():
         rating = float(rating)
     except ValueError:
         rating = get_movie_rating(f"Enter missing rating for {title}: ")
+    
+    note = get_user_input("Enter movie note (optional): ")
 
-    db.add_movie(title, year, rating, poster_url, user["id"])
+    db.add_movie(title, year, rating, poster_url, user["id"], note)
     print(f"Movie {title} successfully added.")
     print(f"Year: {year}")
     print(f"Rating (IMDB): {rating}")
     print(f"Poster: {poster_url}")
+    print(f"Note: {note}")
 
 
 def delete_movie():
@@ -94,22 +90,34 @@ def update_movie():
         Prints an error if the movie doesn't exist.
     """
     user = UserManager.get_current_user()
-
     movies = db.list_movies(user["id"])
 
     title = get_user_input("Enter movie name: ")
 
     try:
-        movie_id = movies[title]["id"]
-    except KeyError:
+        movie = movies[title]
+        print(f"Year: {movie["year"]}")
+        print(f"Rating: {movie["rating"]}")
+        print(f"Note: {movie["note"]}")
+
+        rating = get_movie_rating("Enter new movie rating: ", optional=True)
+        if rating is None:
+            rating = movie["rating"]
+        note = get_user_input("Enter new movie note: ")
+        if note == '':
+            note = movie["note"]
+
+        if rating == movie["rating"] and note == movie["note"]:
+            print("No changes made.")
+            return
+
+        db.update_movie(movie["id"], rating, note)
+        print(f"Movie {title} successfully updated.")
+
+    except KeyError as e:
+        print(e)
         err(f"Movie {title} doesn't exist!")
         return
-
-    rating = get_movie_rating("Enter new rating: ")
-
-    db.update_movie(movie_id, rating)
-    print(f"Movie {title} successfully updated.")
-
 
 def stats():
     """ Prints statistics about your entire dataset.
