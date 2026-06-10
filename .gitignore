@@ -3,6 +3,7 @@
 
 # Pycache
 __pycache__
+*.pyc
 
 # Database file
 data/*
