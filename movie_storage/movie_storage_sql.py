@@ -76,6 +76,7 @@ def reset_schema():
                 user_id INTEGER NOT NULL,
                 note TEXT,
                 imdb_id TEXT,
+                country TEXT,
                 FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
             )
         
@@ -89,7 +90,7 @@ def list_movies(user_id):
     with engine.connect() as connection:
         result = connection.execute(text("""
         
-            SELECT title, year, rating, poster_url, id, note, imdb_id
+            SELECT title, year, rating, poster_url, id, note, imdb_id, country
             FROM movies
             WHERE user_id = :user_id
         
@@ -103,20 +104,35 @@ def list_movies(user_id):
         "id": row[4],
         "note": row[5],
         "imdb_id": row[6],
+        "country": row[7],
         } for row in movies
     }
 
 
-def add_movie(title, year, rating, poster_url, user_id, note, imdb_id):
+def add_movie(title, year, rating, poster_url, user_id, note, imdb_id, country):
     """ Add a new movie to the database. """
     with engine.connect() as connection:
         try:
             connection.execute(text("""
             
-                INSERT INTO movies
-                    (title, year, rating, poster_url, user_id, note, imdb_id)
-                VALUES
-                    (:title, :year, :rating, :poster_url, :user_id, :note, :imdb_id)
+                INSERT INTO movies (
+                    title,
+                    year,
+                    rating,
+                    poster_url,
+                    user_id, note,
+                    imdb_id,
+                    country
+                ) VALUES (
+                    :title,
+                    :year,
+                    :rating,
+                    :poster_url,
+                    :user_id,
+                    :note,
+                    :imdb_id,
+                    :country
+                )
             
             """), {
                     "title": title,
@@ -126,6 +142,7 @@ def add_movie(title, year, rating, poster_url, user_id, note, imdb_id):
                     "user_id": user_id,
                     "note": note,
                     "imdb_id": imdb_id,
+                    "country": country,
                 }
             )
             connection.commit()

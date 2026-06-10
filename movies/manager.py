@@ -23,6 +23,7 @@ def print_movie_dict(title, details):
 def print_detailed_movie_dict(title, details):
     """ Prints a movie with all of the information. """
     print(f"Year: {details["year"]}")
+    print(f"Country: {details["country"]}")
     print(f"Rating: {details["rating"]}")
     print(f"IMBD Page: {get_movie_link(details["imdb_id"])}")
     print(f"Poster Image: {details["poster_url"]}")
@@ -79,7 +80,8 @@ def add_movie():
         details["poster_url"],
         user["id"],
         details["note"],
-        details["imdb_id"]
+        details["imdb_id"],
+        details["country"],
     )
 
     print(f"Movie successfully added!")

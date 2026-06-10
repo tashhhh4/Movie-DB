@@ -1,7 +1,7 @@
 import os
 import movies.manager as MovieManager
 from users import UserManager
-from utils import ensure_dir
+from utils import ensure_dir, get_country_flag
 from movies.lookup import get_movie_link
 
 
@@ -39,6 +39,7 @@ def get_movies():
             "year": item["year"],
             "note": item["note"],
             "imdb_id": item["imdb_id"],
+            "country": item["country"],
         })
     return movie_list
 
@@ -57,6 +58,12 @@ def generate():
     
     list_items = ''
     for movie in movies:
+        flag = get_country_flag(movie["country"])
+        if flag:
+            flag_img = f'<img src="{flag}" alt="flag"/>'
+        else:
+            flag_img = ''
+
         list_items += (
             '<li> '
             '  <div class="movie"> '
@@ -72,7 +79,11 @@ def generate():
            f'        <span class="movie-title">{movie["title"]}</span> '
            f'        <span class="movie-year">({movie["year"]})</span> '
             '      </div> '
-           f'      <span class="movie-rating">Rated {movie["rating"]}</span> '
+            '      <div class="movie-country"> '
+           f'        <span>{movie["country"]}</span> '
+           f'        {flag_img} '
+            '      </div> '
+           f'      <div class="movie-rating">Rated {movie["rating"]}</div> '
             '    </div> '
             '  </div> '
             '</li> '

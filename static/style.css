@@ -47,7 +47,11 @@ body {
   width: 140px;
 }
 
-
+.movie-poster {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    width: 128px;
+    height: 193px;
+}
 
 .movie-info {
   text-align: center;
@@ -70,12 +74,13 @@ body {
   color: #999;
 }
 
-.movie-info .movie-rating {
-  width: 100%;
+.movie-country {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
-.movie-poster {
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-    width: 128px;
-    height: 193px;
+.movie-country img {
+  height: 16px;
 }

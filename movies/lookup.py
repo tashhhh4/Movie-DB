@@ -32,6 +32,7 @@ def get_movie_details(title_search):
             "rating": data["imdbRating"],
             "poster_url": data["Poster"],
             "imdb_id": data["imdbID"],
+            "country": data["Country"],
         }
     
     except AttributeError:
