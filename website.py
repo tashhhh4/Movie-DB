@@ -1,9 +1,10 @@
 import os
 import movies as MovieManager
 from users import UserManager
+from utils import ensure_dir
 
 
-OUTPUT_DIR = "output"
+OUTPUT_DIR = ensure_dir("output")
 STATIC_DIR = "static"
 TEMPLATE_FILE = os.path.join(STATIC_DIR, "index_template.html")
 STYLE_FILE = os.path.join(STATIC_DIR, "style.css")
@@ -35,6 +36,7 @@ def get_movies():
             "poster_url": item["poster_url"],
             "rating": item["rating"],
             "year": item["year"],
+            "note": item["note"],
         })
     return movie_list
 
@@ -53,7 +55,7 @@ def generate():
     
     list_items = ''
     for movie in movies:
-        list_items += f'<li><div class="movie"><img class="movie-poster" src="{movie["poster_url"]}" title><div class="movie-title">{movie["title"]}</div><div class="movie-year">{movie["year"]}</div>'
+        list_items += f'<li><div class="movie"><img class="movie-poster" src="{movie["poster_url"]}" alt="Poster for {movie["title"]}" title="{movie["note"]}"><div class="movie-title">{movie["title"]}</div><div class="movie-year">{movie["year"]}</div>'
 
     html = load_text(TEMPLATE_FILE)
     css = load_text(STYLE_FILE)
