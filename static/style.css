@@ -47,20 +47,30 @@ body {
   width: 140px;
 }
 
-.movie-title,
-.movie-year {
-  font-size: 0.8em;
+.movie-info {
   text-align: center;
-}
-
-.movie-title {
   margin-top: 10px;
+  color: #999;
+  font-size: 0.8em;
 }
 
-.movie-year {
+.movie-info-header {
+  font-size: 1em;
+  margin-bottom: 4px;
+}
+
+.movie-info-header .movie-title {
+  color: #000;
+  font-weight: bold;
+}
+
+.movie-info-header .movie-year {
   color: #999;
 }
 
+.movie-info .movie-rating {
+  width: 100%;
+}
 
 .movie-poster {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);

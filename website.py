@@ -55,7 +55,24 @@ def generate():
     
     list_items = ''
     for movie in movies:
-        list_items += f'<li><div class="movie"><img class="movie-poster" src="{movie["poster_url"]}" alt="Poster for {movie["title"]}" title="{movie["note"]}"><div class="movie-title">{movie["title"]}</div><div class="movie-year">{movie["year"]}</div>'
+        list_items += (
+            '<li> '
+            '  <div class="movie"> '
+            '    <img class="movie-poster" '
+           f'        src="{movie["poster_url"]}" '
+           f'        alt="Poster for {movie["title"]}" '
+           f'        title="{movie["note"]}" '
+            '    > '
+            '    <div class="movie-info"> '
+            '      <div class="movie-info-header"> '
+           f'        <span class="movie-title">{movie["title"]}</span> '
+           f'        <span class="movie-year">({movie["year"]})</span> '
+            '      </div> '
+           f'      <span class="movie-rating">Rated {movie["rating"]}</span> '
+            '    </div> '
+            '  </div> '
+            '</li> '
+        )
 
     html = load_text(TEMPLATE_FILE)
     css = load_text(STYLE_FILE)
